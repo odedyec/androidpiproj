@@ -21,9 +21,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
+import android.widget.VerticalSeekBar;
 
 public class MainActivity extends Activity {
+	
 	double roll = 0,pitch = 0,yaw = 0;
+	double speed = 0;
+	boolean switchState = true,manual = true;
 	private SensorManager mSensor;
 	private Sensor sensor;
 	int ctr=0;
@@ -34,6 +39,10 @@ public class MainActivity extends Activity {
         mSensor = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensor = mSensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensor.registerListener(odedListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        VerticalSeekBar speedBar = (VerticalSeekBar) findViewById(R.id.speed);
+        speedBar.setOnSeekBarChangeListener(new speedBarClass(this));
+        ToggleButton but = (ToggleButton) findViewById(R.id.FRswitch);
+        but.toggle();
     }
 
 
@@ -44,10 +53,21 @@ public class MainActivity extends Activity {
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item){
-    	ctr++;
-    	TextView editText = (TextView) findViewById(R.id.textView1);
-    	editText.setText(""+ctr);
     	return true;
+    }
+    public void directionHandler(View view)
+    {
+    	if (switchState)
+    		switchState = false;
+    	else
+    		switchState = true;
+    }
+    public void manualHandler(View view)
+    {
+    	if (manual)
+    		manual = false;
+    	else
+    		manual= true;
     }
     public void printHello(View view){
     	MessageBox("Hi, what's up??");
@@ -58,6 +78,7 @@ public class MainActivity extends Activity {
     		public void run() { 
     			AlertDialog.Builder dlgAlert = new AlertDialog.Builder(MainActivity.this); 
     			dlgAlert.setMessage(msg); 
+    			Log.d("speed",""+speed);
     			dlgAlert.setTitle("Oded said..."); 
     			dlgAlert.setPositiveButton("OK", null);
     			dlgAlert.setNegativeButton("No", new OnClickListener() {
@@ -87,6 +108,9 @@ public class MainActivity extends Activity {
     	num = (num+360)%360;
     	return Math.round(100*num)/100;
     }
+    public void speedbarHandler(View view){
+    	MessageBox("Speed"+view);
+    }
     private SensorEventListener odedListener = new SensorEventListener() 
     {
 		
@@ -100,7 +124,8 @@ public class MainActivity extends Activity {
 			double size3 = Math.sqrt(event.values[0]*event.values[0] + event.values[2]*event.values[2]);
 			pitch = rad2deg(Math.atan2(event.values[0]/size3, event.values[2]/size3));
 			ImageView steeringWheel = (ImageView) findViewById(R.id.steeringWheel);
-			steeringWheel.setImageBitmap(rotateImage(roll));
+			if (!manual)
+				steeringWheel.setImageBitmap(rotateImage(roll));
 		}
 		
 		@Override
