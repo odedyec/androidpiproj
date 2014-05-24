@@ -40,12 +40,20 @@
         android:textOff="ManualRotate"
         android:onClick="manualHandler" />
 
+    <SeekBar
+        android:id="@+id/steerBar"
+        android:layout_width="295dp"
+        android:layout_height="wrap_content"
+        android:layout_x="10dp"
+        android:layout_y="385dp"
+        android:progress="50" />
+
     <ImageView
         android:id="@+id/steeringWheel"
         android:layout_width="261dp"
         android:layout_height="244dp"
-        android:layout_x="29dp"
-        android:layout_y="164dp"
+        android:layout_x="44dp"
+        android:layout_y="134dp"
         android:src="@drawable/sw" />
 
 </AbsoluteLayout>
